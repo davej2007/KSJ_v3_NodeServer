@@ -5,11 +5,13 @@ const morgan = require('morgan');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const app = express(); 
 const SERVER = HTTP.Server(app);
 // **** Port Variables
 const hostname = 'localhost';
 const PORT = process.env.PORT || 8080;
+const dbURI = process.env.MONGODB_URI || require('./API/config/database').uri;
 
 
 // **** Middleware 
@@ -30,6 +32,14 @@ app.use(function (req, res, next) {
 app.use((req, res,next)=>{
     next();
 });
+// **** Database Connection
+mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true }, (err) => {
+  if (err){
+      console.log('DataBase Connection Error :', err);
+  } else {
+      console.log('Successfully Connected to Database : ',dbURI);
+  }
+});
 // **** Socket IO Stuff
 const io = require("socket.io")(SERVER, {
     cors: {
@@ -48,9 +58,15 @@ io.of('/live')
   })
 })
 
-const SONGRoutes = require('./api/routes/songs')
+const Auth_Routes = require('./api/routes/auth')
+const Event_Routes = require('./api/routes/event')
+const SONG_Routes = require('./api/routes/song')
+const USER_Routes = require('./api/routes/user')
 // **** Router routes
-app.use('/api/songs', SONGRoutes);
+app.use('/api/auth', Auth_Routes);
+app.use('/api/event', Event_Routes);
+app.use('/api/songs', SONG_Routes);
+app.use('/api/user', USER_Routes);
 // **** Main routes
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/public/index.html'));
