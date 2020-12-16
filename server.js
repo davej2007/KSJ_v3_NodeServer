@@ -61,11 +61,13 @@ io.of('/live')
 const Auth_Routes = require('./api/routes/auth')
 const Event_Routes = require('./api/routes/event')
 const SONG_Routes = require('./api/routes/song')
+const TEAM_Routes = require('./api/routes/team')
 const USER_Routes = require('./api/routes/user')
 // **** Router routes
 app.use('/api/auth', Auth_Routes);
 app.use('/api/event', Event_Routes);
 app.use('/api/songs', SONG_Routes);
+app.use('/api/team', TEAM_Routes);
 app.use('/api/user', USER_Routes);
 // **** Main routes
 app.get('*', (req, res) => {
